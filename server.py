@@ -12,27 +12,24 @@ def server():
     s.listen(5)
     print(f"Socket Server is listening on Host: {host} and Port: {port}.")
     try:
-        mloop()
+        while True:
+            client, addr = s.accept()
+            #print_lock.acquire()
+            print(f"New Connection from: {addr[0]}:{addr[1]}.")
+            start_new_thread(receiver, (client,))
+            start_new_thread(sender, (client,))
+        s.close()
     except KeyboardInterrupt:
         s.close()
         print("Program Exitting...")
 
-def mloop():
-    global print_lock
+def receiver(conn):
     while True:
-        client, addr = s.accept()
-        print_lock.acquire()
-        print(f"New Connection from: {addr[0]}:{addr[1]}.")
-        start_new_thread(chat, (client,))
-    s.close()
-
-def chat(c):
-    while True:
-        data = c.recv(1024)
-        if not data:
-            print(f"Connection {client} Dropped")
-            print_lock.release()
-            break
+        data = conn.recv(1024)
+        if not not data:
+            
+            
+            
 
 
 if __name__ == "__main__":
