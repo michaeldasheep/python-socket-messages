@@ -1,8 +1,11 @@
 from _thread import *
 import threading
 import socket
+import json
 
 print_lock = threading.Lock()
+sendData = ""
+dataSendParam = False
 
 def server():
     host = "0.0.0.0"
@@ -16,21 +19,35 @@ def server():
             client, addr = s.accept()
             #print_lock.acquire()
             print(f"New Connection from: {addr[0]}:{addr[1]}.")
-            start_new_thread(receiver, (client,))
-            start_new_thread(sender, (client,))
+            recieve = threading.Thread(target=receiver, args=(client,))
+            send = threading.Thread(target=sender, args=(client,))
+            recieve.start()
+            send.start()
         s.close()
     except KeyboardInterrupt:
         s.close()
         print("Program Exitting...")
 
 def receiver(conn):
+    global sendData
+    global dataSendParam
     while True:
-        data = conn.recv(1024)
-        if not not data:
-            
-            
-            
+        data = conn.recv(1024).decode()
+        parsed = json.loads(data)
+        if parsed['code'] == 1:
+            iden = parsed['identity']
+            msg = parsed['msg']
+            sendData = iden, ": ", msg
+            dataSendParam = True
 
+            
+def sender(conn):
+    global sendData
+    global dataSendParam
+    while True:
+        if dataSendParam == True:
+            conn.send(sendData.encode())
+            dataSendParam = False
 
 if __name__ == "__main__":
     server()
