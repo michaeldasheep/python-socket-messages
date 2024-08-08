@@ -22,6 +22,7 @@ def main():
     except KeyboardInterrupt:
         s.close()
         print("Program Exitting...")
+        quit()
 
 def sender(conn):
     global identity
@@ -30,12 +31,12 @@ def sender(conn):
         if message == "!exit":
             break
         elif message != "":
-            data = '{ "code":1, "identity":"' + identity + '", "msg":"' + message + '"}'
-            conn.send(data.encode())
+            data = '{ "code":"1", "identity":"' + identity + '", "msg":"' + message + '"}'
+            conn.send(data)
 
 def receiver(conn):
     while True:
-        receivedData = conn.recv(1024).decode()
+        receivedData = conn.recv(1024)
         if not receivedData:
             continue
         else:

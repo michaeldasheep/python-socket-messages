@@ -27,14 +27,15 @@ def server():
     except KeyboardInterrupt:
         s.close()
         print("Program Exitting...")
+        quit()
 
 def receiver(conn):
     global sendData
     global dataSendParam
     while True:
-        data = conn.recv(1024).decode()
+        data = conn.recv(1024)
         parsed = json.loads(data)
-        if parsed['code'] == 1:
+        if parsed['code'] == "1":
             iden = parsed['identity']
             msg = parsed['msg']
             sendData = iden, ": ", msg
@@ -46,7 +47,7 @@ def sender(conn):
     global dataSendParam
     while True:
         if dataSendParam == True:
-            conn.send(sendData.encode())
+            conn.send(sendData)
             dataSendParam = False
 
 if __name__ == "__main__":
