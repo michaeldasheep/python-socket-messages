@@ -1,5 +1,4 @@
 import socket
-import time
 
 # User Set Variables
 host = "127.0.0.1"
