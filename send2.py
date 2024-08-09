@@ -3,7 +3,7 @@ import time
 
 # User Set Variables
 host = "127.0.0.1"
-port = 6000
+port = 64000
 identity = "Michael Test"
 
 def main():

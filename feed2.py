@@ -2,7 +2,7 @@ import socket
 
 # User Set Variables
 host = "127.0.0.1"
-port = 6000
+port = 64000
 
 def main():
     global host

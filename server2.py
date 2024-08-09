@@ -17,7 +17,7 @@ def server():
     global s
     global client
     host = "0.0.0.0"
-    port = 6000
+    port = 64000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.bind((host, port))
     s.listen(5)
