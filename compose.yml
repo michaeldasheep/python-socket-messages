@@ -1,0 +1,7 @@
+name: text
+services:
+    text:
+        container_name: text1
+        ports:
+            - 64000:6000
+        image: text:1
