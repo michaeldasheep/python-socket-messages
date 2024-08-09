@@ -3,11 +3,18 @@ import threading
 import socket
 import json
 
-print_lock = threading.Lock()
 sendData = ""
 dataSendParam = False
+print_lock = threading.Lock()
+
+def t_print(*a, **b):
+    """Thread safe print function"""
+    with print_lock:
+        print(*a, **b)
 
 def server():
+    global s
+    global client
     host = "0.0.0.0"
     port = 6000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -15,39 +22,42 @@ def server():
     s.listen(5)
     print(f"Socket Server is listening on Host: {host} and Port: {port}.")
     try:
-        while True:
-            client, addr = s.accept()
-            #print_lock.acquire()
-            print(f"New Connection from: {addr[0]}:{addr[1]}.")
-            recieve = threading.Thread(target=receiver, args=(client,))
-            send = threading.Thread(target=sender, args=(client,))
-            recieve.start()
-            send.start()
-        s.close()
+        client, addr = s.accept()
+        #print_lock.acquire()
+        print(f"New Connection from: {addr[0]}:{addr[1]}.")
+        recieve = threading.Thread(target=receiver)
+        send = threading.Thread(target=sender)
+        recieve.start()
+        send.start()
     except KeyboardInterrupt:
         s.close()
         print("Program Exitting...")
-        quit()
+        exit()
 
-def receiver(conn):
+def receiver():
+    global s
+    global client
     global sendData
     global dataSendParam
     while True:
-        data = conn.recv(1024)
+        data = client.recv(1024).decode()
         parsed = json.loads(data)
-        if parsed['code'] == "1":
+        code = parsed['code']
+        if code == "1":
             iden = parsed['identity']
             msg = parsed['msg']
-            sendData = iden, ": ", msg
+            sendData = "[ " + iden + ": " + msg + " ]"
             dataSendParam = True
 
             
-def sender(conn):
+def sender():
+    global s
+    global client
     global sendData
     global dataSendParam
     while True:
         if dataSendParam == True:
-            conn.send(sendData)
+            client.send(sendData.encode())
             dataSendParam = False
 
 if __name__ == "__main__":
