@@ -9,6 +9,7 @@ identity = "Your Name"
 
 
 print_lock = threading.Lock()
+close = False
 
 def t_print(*a, **b):
     """Thread safe print function"""
@@ -21,6 +22,8 @@ def main():
     global s
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect((host, port))
+    data = '{ "code":"4" }'
+    s.sendall(data.encode())
     print(f"Socket Client is connected to Host: {host} and Port: {port}.")
     try:
         recieve = threading.Thread(target=receiver)
@@ -35,6 +38,7 @@ def main():
 def sender():
     global identity
     global s
+    global close
     while True:
         time.sleep(1)
         print_lock.acquire()
@@ -42,13 +46,15 @@ def sender():
         print_lock.release()
         if message == "!exit":
             s.close()
+            close = True
             exit()
         elif message != "":
             data = '{ "code":"1", "identity":"' + identity + '", "msg":"' + message + '"}'
-            s.send(data.encode())
+            s.sendall(data.encode())
 
 def receiver():
     global s
+    global close
     while True:
         receivedData = s.recv(1024).decode()
         if not receivedData:
@@ -57,6 +63,9 @@ def receiver():
             print_lock.acquire()
             print(receivedData)
             print_lock.release()
+        if close == True:
+            s.close()
+            exit()
 
 if __name__ == "__main__":
     main()

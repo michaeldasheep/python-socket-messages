@@ -26,12 +26,18 @@ def server():
         while True:
             client, addr = s.accept()
             print(f"New Connection from: {addr[0]}:{addr[1]}.")
-            #_thread.start_new_thread(receiver,(client,addr))
-            #_thread.start_new_thread(sender,(client,addr))
-            recieve = threading.Thread(target=receiver, args=(client,addr))
-            send = threading.Thread(target=sender, args=(client,addr))
-            recieve.start()
-            send.start()
+            data = client.recv(1024).decode()
+            if not data:
+                continue
+            else:
+                parsed = json.loads(data)
+                code = parsed['code']
+                if code == "2":
+                    recieve = threading.Thread(target=receiver, args=(client,addr))
+                    recieve.start()
+                elif code == "3":
+                    send = threading.Thread(target=sender, args=(client,addr))
+                    send.start()
         s.close()
     except KeyboardInterrupt:
         print_lock.acquire()
@@ -43,13 +49,11 @@ def server():
 def receiver(client,addr):
     cond = True
     print(f"Recieve Handler for {addr[0]}:{addr[1]} started.")
-    while cond == True:
-        data = client.recv(1024).decode()
-        print(data)
-        if not data:
-            cond = False
-        else:
-            receiveHandler(data, addr)
+    data = client.recv(1024).decode()
+    print(data)
+    if not data:
+        exit()
+    receiveHandler(data, addr)
     print(f"Receive Handler Thread for {addr[0]}:{addr[1]} has been closed.")
     client.close()
 
@@ -64,12 +68,6 @@ def receiveHandler(data, addr):
         sendData = "[ '" + iden + "': '" + msg + "' ]"
         print(sendData)
         dataSendParam = True
-    elif code == "2":
-        print(f"Socket Feed Client Connected on {addr[0]}:{addr[1]}.")
-    elif code == "3":
-        print(f"Socket Send Client Connected on {addr[0]}:{addr[1]}.")
-    elif code == "4":
-        print(f"Socket Send and Recieve Client Connected on {addr[0]}:{addr[1]}.")
             
 def sender(client,addr):
     global sendData
@@ -80,8 +78,6 @@ def sender(client,addr):
         if dataSendParam == True:
             client.sendall(sendData.encode())
             dataSendParam = False
-        keepalive = client.recv(1024).decode()
-        if not keepalive:
             cond = False
     print(f"Send Handler Thread for {addr[0]}:{addr[1]} has been closed.")            
     client.close()

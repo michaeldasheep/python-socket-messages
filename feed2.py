@@ -8,14 +8,15 @@ def main():
     global host
     global port
     global s
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    s.connect((host, port))
-    data = '{ "code":"2" }'
-    s.sendall(data.encode())
     print(f"Socket Feed Client is connected to Host: {host} and Port: {port}.")
     try:
         while True:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((host, port))
+            start = '{ "code":"3","dumb":"True"}'
+            s.sendall(start.encode())
             receivedData = s.recv(1024).decode()
+            s.close()
             #data = '{ "code":"1000", "keepalive":True }' # Keepalive Packets
             #s.send(data.encode())
             if not receivedData:
