@@ -35,7 +35,6 @@ def server():
             else:
                 parsed = json.loads(data)
                 code = parsed['code']
-                inAuthkey = parsed['authkey']
                 if code == "2":
                     inAuthkey = parsed['authkey']
                     if Authkey == inAuthkey:
