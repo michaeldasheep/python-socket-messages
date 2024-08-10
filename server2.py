@@ -2,6 +2,9 @@ import threading
 import socket
 import json
 
+# Server Settings
+Authkey = "none" # Authentication required or not ( plaintext )
+
 sendData = ""
 dataSendParam = False
 print_lock = threading.Lock()
@@ -15,6 +18,7 @@ def t_print(*a, **b):
 def server():
     global s
     global client
+    global Authkey
     host = "0.0.0.0"
     port = 64000
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,12 +35,18 @@ def server():
             else:
                 parsed = json.loads(data)
                 code = parsed['code']
-                if code == "2":
+                inAuthkey = parsed['authkey']
+                if code == "2" and Authkey == inAuthkey:
                     recieve = threading.Thread(target=receiver, args=(client,addr))
                     recieve.start()
                 elif code == "3":
                     send = threading.Thread(target=sender, args=(client,addr))
                     send.start()
+                elif Authkey != inAuthkey:
+                    msg = "Auth Key Incorrect"
+                    client.sendall(msg.encode())
+                    del msg
+                    client.close()
         s.close()
     except KeyboardInterrupt:
         print_lock.acquire()

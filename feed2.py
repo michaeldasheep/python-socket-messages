@@ -1,13 +1,15 @@
+from os import system, name 
 import socket
 
 # User Set Variables
-host = "127.0.0.1"
+host = "110.232.114.228"
 port = 64000
 
 def main():
     global host
     global port
     global s
+    clear()
     print(f"Socket Feed Client is connected to Host: {host} and Port: {port}.")
     try:
         while True:
@@ -28,6 +30,14 @@ def main():
         s.close()
         print("Program Exitting...")
         exit()
+
+def clear(): 
+    # for windows 
+    if name == 'nt': 
+        _ = system('cls') 
+    # for mac and linux(here, os.name is 'posix') 
+    else: 
+        _ = system('clear') 
 
 if __name__ == "__main__":
     main()
