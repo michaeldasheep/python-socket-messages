@@ -15,7 +15,7 @@ def main():
         while True:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             s.connect((host, port))
-            start = '{ "code":"3","dumb":"True"}'
+            start = '{ "code":"3","authkey":"none"}'
             s.sendall(start.encode())
             receivedData = s.recv(1024).decode()
             s.close()

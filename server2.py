@@ -61,6 +61,8 @@ def receiver(client,addr):
     data = client.recv(1024).decode()
     print(f"Recieved Message: {data}.")
     if not data:
+        print(f"Receive Handler Thread for {addr[0]}:{addr[1]} has been closed.")
+        client.close()
         exit()
     receiveHandler(data, addr)
     print(f"Receive Handler Thread for {addr[0]}:{addr[1]} has been closed.")
