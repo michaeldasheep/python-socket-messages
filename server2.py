@@ -36,17 +36,19 @@ def server():
                 parsed = json.loads(data)
                 code = parsed['code']
                 inAuthkey = parsed['authkey']
-                if code == "2" and Authkey == inAuthkey:
-                    recieve = threading.Thread(target=receiver, args=(client,addr))
-                    recieve.start()
+                if code == "2":
+                    inAuthkey = parsed['authkey']
+                    if Authkey == inAuthkey:
+                        recieve = threading.Thread(target=receiver, args=(client,addr))
+                        recieve.start()
+                    else:
+                        msg = "Auth Key Incorrect"
+                        client.sendall(msg.encode())
+                        del msg
+                        client.close()
                 elif code == "3":
                     send = threading.Thread(target=sender, args=(client,addr))
                     send.start()
-                elif Authkey != inAuthkey:
-                    msg = "Auth Key Incorrect"
-                    client.sendall(msg.encode())
-                    del msg
-                    client.close()
         s.close()
     except KeyboardInterrupt:
         print_lock.acquire()
