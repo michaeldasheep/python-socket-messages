@@ -45,6 +45,7 @@ def server():
                         msg = "Auth Key Incorrect"
                         client.sendall(msg.encode())
                         del msg
+                        print(f"Connection from {addr[0]}:{addr[1]} was closed due to: INVALID_AUTHKEY.")
                         client.close()
                 elif code == "3":
                     send = threading.Thread(target=sender, args=(client,addr))
