@@ -49,7 +49,7 @@ def receiver(client,addr):
     cond = True
     print(f"Recieve Handler for {addr[0]}:{addr[1]} started.")
     data = client.recv(1024).decode()
-    print(data)
+    print(f"Recieved Message: {data}.")
     if not data:
         exit()
     receiveHandler(data, addr)
@@ -65,7 +65,6 @@ def receiveHandler(data, addr):
         iden = parsed['identity']
         msg = parsed['msg']
         sendData = "[ '" + iden + "': '" + msg + "' ]"
-        print(sendData)
         dataSendParam = True
             
 def sender(client,addr):
