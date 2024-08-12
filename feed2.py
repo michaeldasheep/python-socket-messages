@@ -2,7 +2,7 @@ from os import system, name
 import socket
 
 # User Set Variables
-host = "110.232.114.228"
+host = "syd1.michaeldasheep.com"
 port = 64000
 
 def main():

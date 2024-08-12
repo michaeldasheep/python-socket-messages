@@ -2,9 +2,9 @@ from os import system, name
 import socket
 
 # User Set Variables
-host = "110.232.114.228"
+host = "syd1.michaeldasheep.com"
 port = 64000
-identity = "Michael Test"
+identity = "Test"
 authkey = "none"
 
 def main():
@@ -37,12 +37,19 @@ def sender():
         if message == "!exit":
             s.close()
             exit()
-        elif message == "!change":
             s.close()
+        elif message == "!change identity":
+            print("Changing Identity")
+            identity = input("Type in your new identity: ")
+            print("New identity successfully saved!")
+        elif message == "!change authkey":
+            print("Changing Authkey")
+            authkey = input("Type in the Authkey of the new server (type nothing if none required): ")
+            print("New Authkey successfully saved!")
+        elif message == "!change server" or message == "!change":
             print("Changing Server")
             host = input("Type in the Host of the new server: ")
             port = int(input("Type in the Port of the new server: "))
-            authkey = input("Type in the Authkey of the new server (type nothing if none configured): ")
             print("New Server Details successfully saved!")
         elif message != "":
             data = '{ "code":"1", "identity":"' + identity + '", "msg":"' + message + '" }'
